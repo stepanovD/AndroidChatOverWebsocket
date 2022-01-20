@@ -32,14 +32,13 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     companion object{
         const val SOCKET_URL = "ws://10.0.2.2:8080/api/v1/chat/websocket"
-        const val DUEL_TOPIC = "/topic/chat"
-        const val DUEL_LINK_SOCKET = "/api/v1/chat/sock"
+        const val CHAT_TOPIC = "/topic/chat"
+        const val CHAT_LINK_SOCKET = "/api/v1/chat/sock"
     }
 
     private val gson: Gson = GsonBuilder().registerTypeAdapter(LocalDateTime::class.java,
         GsonLocalDateTimeAdapter()
     ).create()
-    private var i = 1
     private var mStompClient: StompClient? = null
     private var compositeDisposable: CompositeDisposable? = null
 
@@ -55,11 +54,11 @@ class MainViewModel @Inject constructor(
         initChat()
     }
 
-    fun initChat() {
+    private fun initChat() {
         resetSubscriptions()
 
         if (mStompClient != null) {
-            val topicSubscribe = mStompClient!!.topic(DUEL_TOPIC)
+            val topicSubscribe = mStompClient!!.topic(CHAT_TOPIC)
                 .subscribeOn(Schedulers.io(), false)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ topicMessage: StompMessage ->
@@ -104,7 +103,7 @@ class MainViewModel @Inject constructor(
     fun sendMessage(text: String) {
         val message = Message(text = text, author = "Me")
         val chatSocketMessage = entityToDto(message)
-        sendCompletable(mStompClient!!.send(DUEL_LINK_SOCKET, gson.toJson(chatSocketMessage)))
+        sendCompletable(mStompClient!!.send(CHAT_LINK_SOCKET, gson.toJson(chatSocketMessage)))
         addMessage(message)
     }
 
@@ -116,7 +115,6 @@ class MainViewModel @Inject constructor(
         }
 
         _chatState.value = message
-
     }
 
     private fun sendCompletable(request: Completable) {

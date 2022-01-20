@@ -27,13 +27,13 @@ class ChatController(
 
     private fun sendMessageToUsers(message: ChatSocketMessage) {
         if(message.receiver != null) {
-            logger.debug("${message.receiver}\t$CHAT_TOPIC\t$message")
+            logger.debug("To ${message.receiver}\t$CHAT_TOPIC\t$message")
             simpleMessageTemplate.convertAndSendToUser(message.receiver!!, CHAT_TOPIC, message)
         } else {
-            logger.debug("ALL\t$CHAT_TOPIC\t$message")
+            logger.debug("To all\t$CHAT_TOPIC\t$message")
+            simpleMessageTemplate.convertAndSend(CHAT_TOPIC, message)
 
             val response = ChatSocketMessage(message.text.reversed(), "Echo bot", LocalDateTime.now(ZoneOffset.UTC))
-
             simpleMessageTemplate.convertAndSend(CHAT_TOPIC, response)
         }
     }
