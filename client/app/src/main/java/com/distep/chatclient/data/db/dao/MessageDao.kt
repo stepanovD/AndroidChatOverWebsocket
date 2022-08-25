@@ -13,6 +13,6 @@ interface MessageDao: AbstractDao<Message> {
     @Query("SELECT * FROM message")
     suspend fun getAll(): List<Message>
 
-    @Query("SELECT * FROM message r WHERE chat_id IS NULL ORDER BY date_time DESC")
+    @Query("SELECT * FROM message ORDER BY date_time DESC")
     fun getItems(): DataSource.Factory<Int, Message>
 }
